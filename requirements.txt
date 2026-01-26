@@ -6,3 +6,4 @@ openpyxl
 psycopg2-binary
 sqlalchemy
 pandas
+plotly
