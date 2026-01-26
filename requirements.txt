@@ -1,6 +1,5 @@
-fastapi
-uvicorn[standard]
-python-multipart
+streamlit
 openpyxl
 psycopg2-binary
 sqlalchemy
+pandas
