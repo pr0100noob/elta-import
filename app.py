@@ -446,8 +446,10 @@ def save_upload(filename: str, uploaded_by: str) -> int:
     
     return int(upload_id)
 
-
 def save_data(df: pd.DataFrame, upload_id: int, uploaded_by: str):
+    """Сохранение данных в таблицу data"""
+    
+    # Убедимся, что все колонки существуют в таблице
     cols_in_table = set(table_columns("data"))
     for col in df.columns:
         if col not in cols_in_table:
@@ -460,11 +462,17 @@ def save_data(df: pd.DataFrame, upload_id: int, uploaded_by: str):
     to_save["uploaded_by"] = uploaded_by
     to_save["uploaded_at"] = now
     
-    # Используем pandas to_sql для массовой вставки
-    conn = get_conn()
-    to_save.to_sql("data", conn, if_exists="append", index=False)
-    conn.close()
-
+    # Для PostgreSQL используем SQLAlchemy engine
+    if DB_URL:
+        from sqlalchemy import create_engine
+        engine = create_engine(DB_URL)
+        to_save.to_sql("data", engine, if_exists="append", index=False)
+        engine.dispose()
+    else:
+        # Для SQLite используем прямое подключение
+        conn = get_conn()
+        to_save.to_sql("data", conn, if_exists="append", index=False)
+        conn.close()
 
 def load_data(user_email: str = None, role: str = "admin") -> pd.DataFrame:
     if role == "user" and user_email:
