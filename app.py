@@ -589,7 +589,7 @@ with tab_objs[1]:
             "Выберите поля для фильтрации:",
             options=sorted(all_columns),
             default=DEFAULT_FILTER_FIELDS,  # по умолчанию старые фильтры
-            max_choices=8
+            max_selections=8
         )
 
         filters = {}
