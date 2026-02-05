@@ -614,7 +614,10 @@ with tab_objs[1]:
         
         filtered_show = filtered[show_cols].copy()
         filtered_show = compute_totals_row(filtered_show)
-
+        
+        st.caption(f"Строк: {len(filtered)} (без ИТОГО). Роль: {user['role']}")
+        st.dataframe(filtered_show, use_container_width=True)
+        
         # НОВАЯ КНОПКА XLSX ПОСЛЕ ФИЛЬТРОВ
         if not filtered.empty:
             xlsx_bytes_quick = export_xlsx(filtered)
@@ -625,10 +628,7 @@ with tab_objs[1]:
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 use_container_width=True
             )
-        
-        st.caption(f"Строк: {len(filtered)} (без ИТОГО). Роль: {user['role']}")
-        st.dataframe(filtered_show, use_container_width=True)
-        
+
         st.markdown("---")
         st.subheader("Управление загрузками")
         
