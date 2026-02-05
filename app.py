@@ -588,7 +588,7 @@ with tab_objs[1]:
         available_filters = st.multiselect(
             "Выберите поля для фильтрации:",
             options=sorted(all_columns),
-            default=DEFAULT_FILTER_FIELDS,  # по умолчанию старые фильтры
+            default=[],
             max_selections=32
         )
 
