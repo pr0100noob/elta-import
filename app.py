@@ -605,7 +605,17 @@ with tab_objs[1]:
                             key=f"filter_{field}"
                         )
         
+        # НОВАЯ КНОПКА XLSX ПОСЛЕ ФИЛЬТРОВ
         filtered = filter_df(df, filters)
+        if not filtered.empty:
+            xlsx_bytes_quick = export_xlsx(filtered)
+            st.download_button(
+                "📥 Скачать XLSX (текущие фильтры)",
+                data=xlsx_bytes_quick,
+                file_name=f"elta_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True
+            )
         
         system_cols = {"id", "upload_id", "uploaded_at"}
         if user["role"] != "admin":
