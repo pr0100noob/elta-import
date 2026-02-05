@@ -615,14 +615,16 @@ with tab_objs[1]:
         filtered_show = filtered[show_cols].copy()
         filtered_show = compute_totals_row(filtered_show)
 
-        xlsx_bytes = export_xlsx(filtered_show)
-        st.download_button(
-            "📥 Скачать XLSX",
-            data=xlsx_bytes,
-            file_name="elta_export.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            use_container_width=True
-        )
+        # НОВАЯ КНОПКА XLSX ПОСЛЕ ФИЛЬТРОВ
+        if not filtered.empty:
+            xlsx_bytes_quick = export_xlsx(filtered)
+            st.download_button(
+                "📥 Скачать XLSX",
+                data=xlsx_bytes_quick,
+                file_name=f"elta_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                use_container_width=True
+            )
         
         st.caption(f"Строк: {len(filtered)} (без ИТОГО). Роль: {user['role']}")
         st.dataframe(filtered_show, use_container_width=True)
