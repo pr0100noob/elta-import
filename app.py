@@ -745,11 +745,17 @@ if user["role"] == "admin":
             rules_df = execute_query("SELECT id, field, source_text, target_text, match_type FROM mapping_rules ORDER BY id DESC")
             st.dataframe(rules_df, use_container_width=True)
             
-            del_id = st.number_input("ID правила для удаления", min_value=0, step=1, value=0, key="del_rule")
-            if st.button("🗑️ Удалить правило", use_container_width=True) and del_id:
-                execute_query("DELETE FROM mapping_rules WHERE id=%s", (int(del_id),), fetch=False)
-                st.success(f"Правило #{del_id} удалено.")
-                st.rerun()
+            del_id = st.number_input("ID правила для удаления", min_value=1, step=1, 
+                                    value=1, key="delete_rule_id")  # ← УНИКАЛЬНЫЙ KEY!
+
+            if st.button("🗑️ Удалить правило", use_container_width=True, key="delete_rule_btn"):
+                if del_id > 0:
+                    result = execute_query("DELETE FROM mapping_rules WHERE id=%s", (int(del_id),), fetch=False)
+                    if result is not None:  # Успешно удалено
+                        st.success(f"Правило #{del_id} удалено!")
+                        st.rerun()
+                    else:
+                        st.error("Ошибка удаления или правило не найдено")
         
         st.markdown("---")
         
