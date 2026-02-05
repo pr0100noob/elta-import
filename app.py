@@ -582,13 +582,28 @@ with tab_objs[1]:
     if df.empty:
         st.info("Нет данных. Сначала загрузите файл во вкладке «Загрузка».")
     else:
-        fcols = st.columns(5)
+ # Динамический выбор фильтров
+        st.subheader("Фильтры")
+        all_columns = [col for col in df.columns if col not in {"id", "upload_id", "uploaded_by", "uploaded_at"}]
+        available_filters = st.multiselect(
+            "Выберите поля для фильтрации:",
+            options=sorted(all_columns),
+            default=DEFAULT_FILTER_FIELDS,  # по умолчанию старые фильтры
+            max_choices=8
+        )
+
         filters = {}
-        for i, field in enumerate(DEFAULT_FILTER_FIELDS):
-            with fcols[i]:
-                if field in df.columns:
-                    options = sorted([x for x in df[field].dropna().unique().tolist()])
-                    filters[field] = st.multiselect(field, options=options)
+        if available_filters:
+            filter_cols = st.columns(min(5, len(available_filters)))
+            for i, field in enumerate(available_filters):
+                with filter_cols[i % 5]:
+                    if field in df.columns and len(df[field].dropna()) > 0:
+                        options = sorted(df[field].dropna().unique().tolist())
+                        filters[field] = st.multiselect(
+                            field, 
+                            options=options,
+                            key=f"filter_{field}"
+                        )
         
         filtered = filter_df(df, filters)
         
