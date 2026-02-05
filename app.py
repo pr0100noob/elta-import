@@ -607,6 +607,15 @@ with tab_objs[1]:
         
         # НОВАЯ КНОПКА XLSX ПОСЛЕ ФИЛЬТРОВ
         filtered = filter_df(df, filters)
+        
+        system_cols = {"id", "upload_id", "uploaded_at"}
+        if user["role"] != "admin":
+            system_cols.add("uploaded_by")
+        show_cols = [c for c in filtered.columns if c not in system_cols]
+        
+        filtered_show = filtered[show_cols].copy()
+        filtered_show = compute_totals_row(filtered_show)
+        
         if not filtered.empty:
             xlsx_bytes_quick = export_xlsx(filtered)
             st.download_button(
@@ -616,14 +625,6 @@ with tab_objs[1]:
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 use_container_width=True
             )
-        
-        system_cols = {"id", "upload_id", "uploaded_at"}
-        if user["role"] != "admin":
-            system_cols.add("uploaded_by")
-        show_cols = [c for c in filtered.columns if c not in system_cols]
-        
-        filtered_show = filtered[show_cols].copy()
-        filtered_show = compute_totals_row(filtered_show)
         
         st.caption(f"Строк: {len(filtered)} (без ИТОГО). Роль: {user['role']}")
         st.dataframe(filtered_show, use_container_width=True)
